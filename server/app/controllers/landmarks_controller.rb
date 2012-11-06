@@ -15,17 +15,21 @@ class LandmarksController < ApplicationController
   end
 
   # GET /landmarks/1
+  # GET /landmarks/1.json
   def show
     @landmark = Landmark.find(params[:id])
-    uri = URI.parse("http://graph.facebook.com/" + @landmark.fb_username)
+    uri = URI.parse("http://graph.facebook.com/" + @landmark.fb_username) # TODO: refactor 
 
     response = Net::HTTP.get_response(uri)
     http = Net::HTTP.new(uri.host, uri.port)
-    
+
     response = http.request(Net::HTTP::Get.new(uri.request_uri))
     @response = JSON.parse response.body
 
-    return render :json => @response
+    respond_to do |format|
+      format.html # show.html.erb
+      format.json { render json: @response }
+    end
   end
 
   # GET /landmarks/new
@@ -50,7 +54,7 @@ class LandmarksController < ApplicationController
     @landmark = Landmark.new(params[:landmark])
 
     respond_to do |format|
-      if @landmark.save
+      if @landmark.save 
         format.html { redirect_to @landmark, notice: 'Landmark was successfully created.' }
         format.json { render json: @landmark, status: :created, location: @landmark }
       else
