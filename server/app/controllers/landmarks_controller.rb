@@ -22,7 +22,7 @@ class LandmarksController < ApplicationController
 
     response = Net::HTTP.get_response(uri)
     http = Net::HTTP.new(uri.host, uri.port)
-
+    
     response = http.request(Net::HTTP::Get.new(uri.request_uri))
     @response = JSON.parse response.body
 
@@ -54,7 +54,7 @@ class LandmarksController < ApplicationController
     @landmark = Landmark.new(params[:landmark])
 
     respond_to do |format|
-      if @landmark.save 
+      if @landmark.save
         format.html { redirect_to @landmark, notice: 'Landmark was successfully created.' }
         format.json { render json: @landmark, status: :created, location: @landmark }
       else
