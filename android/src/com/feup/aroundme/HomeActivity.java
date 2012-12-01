@@ -22,7 +22,6 @@ protected void onCreate(Bundle savedInstanceState)
     // Button Listeners
     Button skip = (Button) findViewById(R.id.btnSkip);
 	skip.setOnClickListener(new View.OnClickListener() {
-		@Override
 		public void onClick(View arg0) {
 			onClickFeature(arg0);
 		}
@@ -31,7 +30,6 @@ protected void onCreate(Bundle savedInstanceState)
 	
 	 Button btnFB = (Button) findViewById(R.id.btnFB);
 	 btnFB.setOnClickListener(new View.OnClickListener() {
-			@Override
 			public void onClick(View arg0) {
 				 startActivity (new Intent(getApplicationContext(), FacebookConnect.class));
 			}
@@ -41,7 +39,6 @@ protected void onCreate(Bundle savedInstanceState)
 	// Button Listeners
     Button settings = (Button) findViewById(R.id.btnSettings);
     settings.setOnClickListener(new View.OnClickListener() {
-		@Override
 		public void onClick(View arg0) {
 			onClickFeature(arg0);
 		}
@@ -51,7 +48,6 @@ protected void onCreate(Bundle savedInstanceState)
 	// Button Listeners
     Button exit = (Button) findViewById(R.id.btnLeave);
     exit.setOnClickListener(new View.OnClickListener() {
-		@Override
 		public void onClick(View arg0) {
 			finish();
 		}

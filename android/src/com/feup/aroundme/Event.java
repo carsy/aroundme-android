@@ -9,35 +9,15 @@ public class Event {
 	private String location;
 	private String lat;
 	private String log;
-	private String venue;
-	
-	public Event(String id, String title, String startTime, String endTime,
-			String location, String lat, String log) {
-		super();
-		this.id = id;
-		this.title = title;
-		this.startTime = startTime;
-		this.endTime = endTime;
-		this.location = location;
-		this.lat = lat;
-		this.log = log;
-		this.venue = null;
-	}
-	
-	public Event(String _id, String _title, String _sT, String _eT, String _loc){
-		this.id = _id;
-		this.title = _title;
-		this.startTime = _sT;
-		this.endTime = _eT;
-		this.location = _loc;
-		this.venue = null;
-	}
+	private String venueID; // id of the venue
+	private String venue;   // venue name
 
-	public Event(String string, String string2, String string3, String string4) {
-		this.id = string;
-		this.title = string2;
-		this.startTime = string3;
-		this.location = string4;
+	public Event(String id, String t, String time, String location) {
+		this.id = id;
+		this.title = t;
+		this.startTime = time;
+		this.location = location;
+		this.venueID = "";
 	}
 
 	public String getId() {
@@ -83,6 +63,13 @@ public class Event {
 		this.log = log;
 	}
 
+	public void setVenueID(String venue) {
+		this.venueID = venue;
+	}
+	public String getVenueID() {
+		return venueID;
+	}
+	
 	public void setVenue(String venue) {
 		this.venue = venue;
 	}

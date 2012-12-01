@@ -46,7 +46,7 @@ public class MapItemOverlay extends ItemizedOverlay {
 	  OverlayItem item = mOverlays.get(index);
 	  AlertDialog.Builder dialog = new AlertDialog.Builder(mContext);
 	  dialog.setTitle(item.getTitle());
-	  dialog.setMessage(item.getSnippet());
+	  dialog.setMessage("inserir texto");
 	  dialog.show();
 	  return true;
 	}

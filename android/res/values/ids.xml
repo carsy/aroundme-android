@@ -12,5 +12,8 @@
 
     <item type="id" name="blocks_ruler" />
     <item type="id" name="blocks_now" />
+    
+    <item type="id" name="balloon_inner_layout" />
+	<item type="id" name="balloon_close" />
 
 </resources>

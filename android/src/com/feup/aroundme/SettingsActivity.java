@@ -21,7 +21,6 @@ protected void onCreate(Bundle savedInstanceState)
     
     Button btnSettingsFB = (Button) findViewById(R.id.btnSettingsFB);
     btnSettingsFB.setOnClickListener(new View.OnClickListener() {
-		@Override
 		public void onClick(View arg0) {
 			onClickFeature(arg0);
 		}

@@ -142,13 +142,8 @@ public void onClickHome (View v)
 public void onClickFeature (View v)
 {
     int id = v.getId ();
-    switch (id) {
-      case R.id.btnSkip :
-           startActivity (new Intent(getApplicationContext(), ShowMapActivity.class));
-           break;
-      default: 
-    	   break;
-    }
+    if (id == R.id.btnSkip)
+    	startActivity (new Intent(getApplicationContext(), ShowMapActivity.class));
 }
 
 /**

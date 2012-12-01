@@ -33,7 +33,6 @@ public class EventsMenuCategoriesActivity extends Activity {
     mainListView = (ListView) findViewById( R.id.mainListView );
     
     mainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-      @Override
       public void onItemClick( AdapterView<?> parent, View item, 
                                int position, long id) {
         Category planet = listAdapter.getItem( position );
