@@ -17,6 +17,14 @@ public class Marker {
 	private double lat;
 	private double log;
 	
+	/**
+	 * 
+	 * @param parseDouble latitude
+	 * @param parseDouble2 longitude
+	 * @param v venue
+	 * @param t title of the window
+	 * @param id id of the venue
+	 */
 	public Marker(double parseDouble, double parseDouble2, String v, String t, String id) {
 		Log.w("marker", "lat: " + Double.toString(parseDouble) + " log: " + Double.toString(parseDouble2));
 		lat = parseDouble;

@@ -3,7 +3,13 @@ package com.feup.aroundme;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,6 +18,7 @@ import android.util.Log;
 
 import com.facebook.android.FacebookError;
 import com.facebook.android.AsyncFacebookRunner.RequestListener;
+import com.feup.aroundme.markers.CustomOverlayItem;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.OverlayItem;
@@ -38,20 +45,22 @@ public class VenueRequestListener implements RequestListener {
 			
 			synchronized(ShowMapActivity.markers) {
 				Iterator<Marker> i = ShowMapActivity.markers.iterator();
-				//Log.w("venues","Processing VenueRequesListener Marker: " + ((Marker) i).getVenue());
 				while (i.hasNext()) {
 						Marker m = i.next(); 
-						Log.w("events","m.getVenueID:" + m.getVenueID() + " , event.getVenue:" + event.getVenueID());
-						if (m.getVenueID().equals(event.getVenueID())) { // TODO this never happens
+						if (m.getVenueID().equals(event.getVenueID())) { 
 							markerFound = true;
 							m.addEvent(event);
 							m.titleToVenue(); // since we have more than one event, we change the display name of the marker
-							Log.w("events","added event:" + event.getTitle());
-							Log.w("events","existing events:" + m.getEventString());
+							//Log.w("events","added event:" + event.getTitle());
+							//Log.w("events","existing events:" + m.getEventString());
 							break;
+						}
+						else {
+							Log.w("events","venueRequestListener not equal:" );
 						}
 					}
 				if (!markerFound)
+					Log.w("events","adding Marker for venue:" + event.getVenueID() + " markers.size()" + ShowMapActivity.markers.size() );
 					ShowMapActivity.addMarker(event, map);
 				} 
 			
@@ -86,32 +95,77 @@ public class VenueRequestListener implements RequestListener {
 
 	}
 	
-private void renderMarkers() {
+public void renderMarkers() {
+	
+	// TODO transform this to a function
+	// flat markers
+	Map<String, ArrayList<Marker>> map = new HashMap<String, ArrayList<Marker>>();
+	
+	synchronized(ShowMapActivity.markers) {
+		Iterator<Marker> i = ShowMapActivity.markers.iterator();
+		while (i.hasNext()) {
+				Marker m = i.next(); 
+				if (map.containsKey(m.getVenueID()))
+					map.get(m.getVenueID()).add(m); // Venue X -> Marker1, Marker2
+				else {
+					ArrayList<Marker> markers = new ArrayList<Marker>();
+					markers.add(m);
+					map.put(m.getVenueID(), markers); // Venue X -> Marker
+				}
+			}
+	}
+	
+	List<Marker> finalMarkers = Collections.synchronizedList(new ArrayList()); 
+	Collection<ArrayList<Marker>> allMarkers = map.values();
+	for (ArrayList<Marker> lMarker: allMarkers) {
+
+		ArrayList<Event> events = new ArrayList<Event>();
+		for (Marker m: lMarker)
+			events.addAll(m.getEvents());
+		
+		Marker m = lMarker.get(0);
+		m.setEvents(events);
+		finalMarkers.add(m);
+	}
+	
+	ShowMapActivity.markers = finalMarkers;
+	// end flatting markers
 		
 	    synchronized (ShowMapActivity.markers) {
 	    	Iterator<Marker> i = ShowMapActivity.markers.iterator();
+	    	Log.w("markers", "markers: " + ShowMapActivity.markers.size());
 			while (i.hasNext()) {
 				Marker m = i.next();
 				GeoPoint point = new GeoPoint((int) (m.getLat()* 1E6), (int) (m.getLog()* 1E6));
 				
-				// TODO transform eventlist in a full link w/ description and whatnot
+				// TODO transform eventList in a full link w/ description
+				Event []events = new Event[m.getEvents().size()];
+				m.getEvents().toArray(events);
+				
 				String eventList = "";
-				for (Event e: m.getEvents())
-					eventList = eventList + e.getTitle() + ":" + e.getStartTime() + "\n";
+				for (Event e: events) {
+					eventList += e.getTitle() + " - " + e.getStartTime() + "\n";
+					Log.w("markers", "eventList: " + e.getTitle());
+				}
 				
-				Log.w("markers", "muitos renderMarkers: adding marker2: " + m.getTitle() + "  with events: \n " + eventList);
-				//Log.w("markers", "muitos renderMarkers size: " + Integer.toString(mapOverlays.size()));
-				OverlayItem overlayitem = new OverlayItem(point, m.getTitle(), eventList);
+				Log.w("markers", "renderMarkers" + m.getTitle() + "  with events: \n " + eventList);
+				CustomOverlayItem overlayitem = new CustomOverlayItem(point, m.getTitle(), eventList, m.getEvents());
+				
 				ShowMapActivity.itemizedoverlay.addOverlay(overlayitem);
-				
-				GeoPoint point2 = new GeoPoint(35410000, 139460000);
-				OverlayItem overlayitem2 = new OverlayItem(point2, "Sekai, konichiwa!", "I'm in Japan!");
-				ShowMapActivity.itemizedoverlay.addOverlay(overlayitem2);
+							
+				GeoPoint point2 = new GeoPoint((int)(51.5174723*1E6),(int)(-0.0899537*1E6));
+				CustomOverlayItem overlayItem = new CustomOverlayItem(point2, "Tomorrow Never Dies (1997)",
+				"(M gives Bond his mission in Daimler car)",
+				m.getEvents());
+				ShowMapActivity.itemizedoverlay.addOverlay(overlayItem);
 				
 				ShowMapActivity.mapView.getOverlays().clear();
-				
 				ShowMapActivity.mapView.getOverlays().add(ShowMapActivity.itemizedoverlay);
 				ShowMapActivity.mapView.postInvalidate();
+				
+				//final MapController mc = mapView.getController();
+				//mc.animateTo(point2);
+				//mc.setZoom(16);
 				//mapView.getController.animate(center point)  
 				//mapOverlays.add(itemizedoverlay);
 			}

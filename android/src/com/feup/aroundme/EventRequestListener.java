@@ -24,8 +24,6 @@ public class EventRequestListener implements RequestListener {
 		
 		public void onComplete(String response, Object state) {
 			try {
-				//Log.d(TAG, "Response: " + response.toString());
-								
 				final JSONObject json = new JSONObject(response);
 				JSONArray d = json.getJSONArray("data");
 	 
