@@ -4,6 +4,13 @@
 # or operating system, you probably want to add a global ignore instead:
 #   git config --global core.excludesfile ~/.gitignore_global
 
-# Ignore eclipse metadata
-/.metadata/*
+# eclipse metadata
+.metadata/
+.classpath
+.project
+.settings/
 
+# android project
+gen
+bin
+project.properties

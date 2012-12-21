@@ -1,7 +1,5 @@
 package com.feup.aroundme;
 
-import com.feup.aroundme.R;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -148,8 +146,8 @@ public void onClickFeature (View v)
     	startActivity (new Intent(getApplicationContext(), SettingsActivity.class));
     else if (id == R.id.btnSettingsFB)
     	startActivity (new Intent(getApplicationContext(), SettingsFacebookActivity.class));
-    else if (id == R.id.btnBack)
-    	onBackPressed();
+		// else if (id == R.id.btnBack)
+		// onBackPressed();
 }
 
 /**

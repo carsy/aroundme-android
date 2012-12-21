@@ -10,8 +10,8 @@ import org.json.JSONObject;
 
 import android.util.Log;
 
-import com.facebook.android.FacebookError;
 import com.facebook.android.AsyncFacebookRunner.RequestListener;
+import com.facebook.android.FacebookError;
 import com.google.android.maps.MapActivity;
 
 public class EventRequestListener implements RequestListener {
@@ -26,7 +26,7 @@ public class EventRequestListener implements RequestListener {
 			try {
 				final JSONObject json = new JSONObject(response);
 				JSONArray d = json.getJSONArray("data");
-	 
+
 				for (int i = 0; i < d.length(); i++) {
 					JSONObject event = d.getJSONObject(i);
 					Event newEvent = new Event(event.getString("id"),

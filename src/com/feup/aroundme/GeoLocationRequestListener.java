@@ -3,14 +3,12 @@ package com.feup.aroundme;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.Iterator;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.facebook.android.AsyncFacebookRunner.RequestListener;
 import com.facebook.android.FacebookError;
-import com.google.android.maps.GeoPoint;
 
 public class GeoLocationRequestListener implements RequestListener {
 

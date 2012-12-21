@@ -1,17 +1,7 @@
 package com.feup.aroundme;
 
-import java.util.ArrayList;
-import java.util.Vector;
-
-import com.feup.aroundme.R;
-import com.feup.aroundme.other.MyCustomAdapter;
-import com.feup.aroundme.other.Parent;
-
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.ExpandableListView;
 
 public class EventsMenuActivity extends SuperActivity 
 {
