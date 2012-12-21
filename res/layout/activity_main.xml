@@ -1,0 +1,23 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <fragment
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        class="com.google.android.gms.maps.SupportMapFragment"
+        tools:context=".MainActivity" >
+    </fragment>
+
+    <ImageButton
+        android:id="@+id/snapUserPostionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:scaleType="center"
+        android:src="@drawable/snap_user_location" android:contentDescription="@string/menu_snap_user_position"/>
+
+</FrameLayout>
