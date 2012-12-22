@@ -17,7 +17,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:scaleType="center"
-        android:src="@drawable/snap_user_location" android:contentDescription="@string/menu_snap_user_position"/>
+        android:contentDescription="@string/menu_snap_user_position"
+        android:onClick="@string/on_click_snap_users_position"
+        android:scaleType="centerInside"
+        android:src="@drawable/snap_user_location" />
 
 </FrameLayout>

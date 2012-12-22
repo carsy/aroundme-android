@@ -1,39 +1,29 @@
 package pt.up.fe.aroundme.activities;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-
 import pt.up.fe.aroundme.R;
+import pt.up.fe.aroundme.models.Landmark;
 import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.maps.MapController;
 
 public class MainActivity extends FragmentActivity implements LocationListener {
 	private static final int SNAP_ANIMATION_DURATION = 650;
@@ -43,54 +33,29 @@ public class MainActivity extends FragmentActivity implements LocationListener {
 	private GoogleMap map;
 	private LocationManager locationManager;
 	private String provider;
-	private MapController mControl;
 
-	private Location lastKnownUserLocation;
+	private Location lastUserLocation;
+	private Integer radius = 100; // TODO
 	private Marker userMarker;
+
+	private CameraPosition lastCameraPosition; // TODO
 	private CameraPosition userCameraPosition;
+
+	private AroundMeController aroundmeController;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
+		setContentView(R.layout.activity_main);
 
-        LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
-        boolean enabledGPS = service
-                .isProviderEnabled(LocationManager.GPS_PROVIDER);
-        boolean enabledWiFi = service
-                .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+		this.aroundmeController = new AroundMeController(this);
+		this.map = ((SupportMapFragment) getSupportFragmentManager()
+				.findFragmentById(R.id.map)).getMap();
+		// this.map.setOnCameraChangeListener(this.onCameraChange());
 
-		putUserOnMap();
-	}
+		this.putUserOnMap();
 
-	private void putUserOnMap() { // TODO handle providers availability
-		
-		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		// Define the criteria how to select the location provider -> use
-		// default
-		Criteria criteria = new Criteria();
-		provider = locationManager.getBestProvider(criteria, false);
-		lastKnownUserLocation = locationManager
-.getLastKnownLocation(provider);
-
-		// Initialize the location fields
-		if (lastKnownUserLocation != null) {
-			onLocationChanged(lastKnownUserLocation);
-
-			userCameraPosition = new CameraPosition.Builder()
-					.target(new LatLng(lastKnownUserLocation.getLatitude(),
-							lastKnownUserLocation.getLongitude())).zoom(16) // Sets
-																		// the
-																		// zoom
-					.tilt(30) // Sets the tilt of the camera to 30 degrees
-					.build();
-
-			this.snapUserPosition();
-
-		} else {
-			Log.d("putUserOnMap()", "lastKnownLocation null!");
-		}
+		Log.d("MainActivity", "onCreate()");
 	}
 
 	/* Request updates at startup */
@@ -98,6 +63,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
 	protected void onResume() {
 		super.onResume();
 		locationManager.requestLocationUpdates(provider, 400, 1, this);
+		Log.d("MainActivity", "onResume()");
 	}
 
 	/* Remove the locationlistener updates when Activity is paused */
@@ -105,43 +71,32 @@ public class MainActivity extends FragmentActivity implements LocationListener {
 	protected void onPause() {
 		super.onPause();
 		locationManager.removeUpdates(this);
+
+		Log.d("MainActivity", "onPause()");
 	}
 
 	@Override
 	public void onLocationChanged(Location location) {
-		double lat = location.getLatitude();
-		double lng = location.getLongitude();
-
-		Log.d("onLocationChanged", "Location = (" + lat + "," + lng + ")");
-
-		if (userMarker != null)
-			userMarker.remove();
-
-		userMarker = map.addMarker(new MarkerOptions()
-				.position(
-						new LatLng(lastKnownUserLocation.getLatitude(),
-								lastKnownUserLocation.getLongitude()))
-				.title("Start")
-				.icon(BitmapDescriptorFactory
-						.fromResource(R.drawable.location_user)));
+		this.lastUserLocation = new Location(location);
+		this.updateUserMarker();
 	}
 
 	@Override
 	public void onProviderDisabled(String provider) {
-		Toast.makeText(this, "Enabled new provider " + provider,
+		Toast.makeText(this, "Disabled new provider " + provider,
 				Toast.LENGTH_SHORT).show();
 
 	}
 
 	@Override
 	public void onProviderEnabled(String provider) {
-		Toast.makeText(this, "Disabled provider " + provider,
-				Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, "Enabled provider " + provider, Toast.LENGTH_SHORT)
+				.show();
 	}
 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
-		// TODO Auto-generated method stub
+		// TODO handle providers availability
 	}
 
 	@Override
@@ -155,7 +110,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menu_snap_user_position:
-			snapUserPosition();
+			snapUsersPosition(this.getCurrentFocus());
 			return true;
 		case R.id.menu_refresh:
 			menuRefresh();
@@ -171,15 +126,9 @@ public class MainActivity extends FragmentActivity implements LocationListener {
 		}
 	}
 
-	private void snapUserPosition() {
-		map.animateCamera(
-				CameraUpdateFactory.newCameraPosition(userCameraPosition),
-				MainActivity.SNAP_ANIMATION_DURATION, null);
-	}
-
 	private void menuRefresh() {
-		new RequestTask()
-				.execute("http://around-me.herokuapp.com/landmarks.json");
+		this.aroundmeController.refreshLandmarks(this.lastUserLocation,
+				this.radius);
 	}
 
 	private void menuSettings() {
@@ -192,41 +141,75 @@ public class MainActivity extends FragmentActivity implements LocationListener {
 
 	}
 
-	class RequestTask extends AsyncTask<String, String, String> {
+	private OnCameraChangeListener onCameraChange() {
+		return new OnCameraChangeListener() {
 
-		@Override
-		protected String doInBackground(String... uri) {
-			HttpClient httpclient = new DefaultHttpClient();
-			HttpResponse response;
-			String responseString = null;
-			try {
-				response = httpclient.execute(new HttpGet(uri[0]));
-				StatusLine statusLine = response.getStatusLine();
-				if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-					ByteArrayOutputStream out = new ByteArrayOutputStream();
-					response.getEntity().writeTo(out);
-					out.close();
-					responseString = out.toString();
-				} else {
-					// Closes the connection.
-					response.getEntity().getContent().close();
-					throw new IOException(statusLine.getReasonPhrase());
-				}
-			} catch (ClientProtocolException e) {
-				// TODO Handle problems..
-			} catch (IOException e) {
-				// TODO Handle problems..
+			@Override
+			public void onCameraChange(CameraPosition position) {
 			}
-			return responseString;
+		};
+	}
+
+	private void putUserOnMap() { // TODO handle providers availability
+
+		this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		// Define the criteria how to select the location provider -> use
+		// default
+		Criteria criteria = new Criteria();
+		this.provider = this.locationManager.getBestProvider(criteria, false);
+		this.lastUserLocation = this.locationManager
+				.getLastKnownLocation(this.provider);
+
+		// Initialize the location fields
+		if (this.lastUserLocation != null) {
+			this.updateUserMarker();
+
+			this.lastCameraPosition = this.userCameraPosition;
+
+			this.snapUsersPosition(this.getCurrentFocus());
+
+		} else {
+			Log.d("putUserOnMap()", "lastKnownLocation null!");
+		}
+	}
+
+	private void updateUserMarker() {
+		Log.d("updateUserMarker()",
+				"Location = (" + this.lastUserLocation.getLatitude() + ","
+						+ this.lastUserLocation.getLongitude() + ")");
+
+		if (this.userMarker != null)
+			this.userMarker.remove();
+
+		this.userMarker = this.map.addMarker(new MarkerOptions()
+				.position(
+						new LatLng(this.lastUserLocation.getLatitude(),
+								this.lastUserLocation.getLongitude()))
+				.title("you")
+				.icon(BitmapDescriptorFactory
+						.fromResource(R.drawable.location_user)));
+	}
+
+	public void snapUsersPosition(View view) {
+		if (this.userCameraPosition == null) {
+			this.userCameraPosition = new CameraPosition.Builder()
+					.target(new LatLng(lastUserLocation.getLatitude(),
+							lastUserLocation.getLongitude())).zoom(16).tilt(30)
+					.build();
 		}
 
-		@Override
-		protected void onPostExecute(String result) {
-			super.onPostExecute(result);
+		this.map.animateCamera(
+				CameraUpdateFactory.newCameraPosition(this.userCameraPosition),
+				MainActivity.SNAP_ANIMATION_DURATION, null);
+	}
 
-			Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT)
-					.show();
-			Log.d("response", result);
-		}
+	public void addLandmarkMarker(Landmark landmark) {
+		this.map.addMarker(new MarkerOptions()
+				.position(
+						new LatLng(landmark.getLocationLatitude(), landmark
+								.getLocationLongitude()))
+				.title(landmark.getName())
+				.icon(BitmapDescriptorFactory
+						.fromResource(R.drawable.location_place)));
 	}
 }
