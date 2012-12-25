@@ -3,11 +3,14 @@ package pt.up.fe.aroundme.activities;
 import pt.up.fe.aroundme.R;
 import pt.up.fe.aroundme.models.Landmark;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -17,13 +20,14 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 public class MainActivity extends FragmentActivity implements LocationListener {
 	private static final int SNAP_ANIMATION_DURATION = 650;
@@ -35,13 +39,14 @@ public class MainActivity extends FragmentActivity implements LocationListener {
 	private String provider;
 
 	private Location lastUserLocation;
-	private Integer radius = 100; // TODO
+	private Integer radius = 25; // TODO
 	private Marker userMarker;
 
-	private CameraPosition lastCameraPosition; // TODO
 	private CameraPosition userCameraPosition;
 
 	private AroundMeController aroundmeController;
+
+	private Polyline userRadius;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +61,16 @@ public class MainActivity extends FragmentActivity implements LocationListener {
 		this.putUserOnMap();
 
 		Log.d("MainActivity", "onCreate()");
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+	}
+
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
 	}
 
 	/* Request updates at startup */
@@ -78,7 +93,9 @@ public class MainActivity extends FragmentActivity implements LocationListener {
 	@Override
 	public void onLocationChanged(Location location) {
 		this.lastUserLocation = new Location(location);
+		map.clear();
 		this.updateUserMarker();
+		this.updateLandmarksMarkers();
 	}
 
 	@Override
@@ -127,50 +144,49 @@ public class MainActivity extends FragmentActivity implements LocationListener {
 	}
 
 	private void menuRefresh() {
+
+		this.radius = PreferenceManager.getDefaultSharedPreferences(
+				getApplicationContext()).getInt("radius",
+				R.integer.radius_default);
+
+		Log.d("onRefresh(): radius", this.radius + "");
+
 		this.aroundmeController.refreshLandmarks(this.lastUserLocation,
 				this.radius);
+
+		double R = 6371d; // earth's mean radius in km
+		double d = this.radius / R; // radius given in km
+		double lat1 = Math.toRadians(this.lastUserLocation.getLatitude());
+		double lon1 = Math.toRadians(this.lastUserLocation.getLongitude());
+		PolylineOptions options = new PolylineOptions();
+		for (int x = 0; x <= 720; x++) {
+			double brng = Math.toRadians(x);
+			double latitudeRad = Math.asin(Math.sin(lat1) * Math.cos(d)
+					+ Math.cos(lat1) * Math.sin(d) * Math.cos(brng));
+			double longitudeRad = (lon1 + Math.atan2(
+					Math.sin(brng) * Math.sin(d) * Math.cos(lat1), Math.cos(d)
+							- Math.sin(lat1) * Math.sin(latitudeRad)));
+			options.add(new LatLng(Math.toDegrees(latitudeRad), Math
+					.toDegrees(longitudeRad)));
+		}
+
+		if (this.userRadius != null)
+			this.userRadius.remove();
+
+		this.userRadius = map.addPolyline(options.color(Color.BLUE).width(1));
 	}
 
 	private void menuSettings() {
-		// TODO Auto-generated method stub
-
+		startActivity(new Intent(getApplicationContext(),
+				SettingsActivity.class));
 	}
 
 	private void menuAbout() {
-		// TODO Auto-generated method stub
 
 	}
 
-	private OnCameraChangeListener onCameraChange() {
-		return new OnCameraChangeListener() {
-
-			@Override
-			public void onCameraChange(CameraPosition position) {
-			}
-		};
-	}
-
-	private void putUserOnMap() { // TODO handle providers availability
-
-		this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		// Define the criteria how to select the location provider -> use
-		// default
-		Criteria criteria = new Criteria();
-		this.provider = this.locationManager.getBestProvider(criteria, false);
-		this.lastUserLocation = this.locationManager
-				.getLastKnownLocation(this.provider);
-
-		// Initialize the location fields
-		if (this.lastUserLocation != null) {
-			this.updateUserMarker();
-
-			this.lastCameraPosition = this.userCameraPosition;
-
-			this.snapUsersPosition(this.getCurrentFocus());
-
-		} else {
-			Log.d("putUserOnMap()", "lastKnownLocation null!");
-		}
+	private void updateLandmarksMarkers() {
+		menuRefresh();
 	}
 
 	private void updateUserMarker() {
@@ -188,6 +204,25 @@ public class MainActivity extends FragmentActivity implements LocationListener {
 				.title("you")
 				.icon(BitmapDescriptorFactory
 						.fromResource(R.drawable.location_user)));
+	}
+
+	private void putUserOnMap() { // TODO handle providers availability
+
+		this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		// Define the criteria how to select the location provider -> use
+		// default
+		Criteria criteria = new Criteria();
+		this.provider = this.locationManager.getBestProvider(criteria, false);
+		this.lastUserLocation = this.locationManager
+				.getLastKnownLocation(this.provider);
+
+		// Initialize the location fields
+		if (this.lastUserLocation != null) {
+			this.updateUserMarker();
+
+			this.snapUsersPosition(this.getCurrentFocus());
+
+		}
 	}
 
 	public void snapUsersPosition(View view) {

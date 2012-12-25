@@ -44,7 +44,7 @@ public class AroundMeController {
 		Landmark landmark = this.gson.fromJson(landmarkJSON,
 				Landmark.class);
 
-		Log.d("landmarkJSON", landmarkJSON);
+		Log.d("addLandmark", landmark.getUsername());
 
 		this.loadedLandmarks.add(landmark);
 		mainActivity.addLandmarkMarker(landmark);
