@@ -1,24 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:aroundme="http://around-me.herokuapp.com"
-    android:key="preference_screen" >
+    android:key="preference_screen">
 
     <PreferenceCategory
         android:key="pref_key_general"
         android:title="@string/prefs_category_general" >
-        
         <pt.up.fe.aroundme.activities.SeekBarPreference
-            android:key="@string/prefs_radius_value"
             android:defaultValue="@integer/radius_default"
+            android:key="@string/prefs_radius_value"
             android:max="50"
             android:summary="@string/prefs_radius_summary"
             android:title="@string/prefs_radius_title"
+            aroundme:interval="1"
             aroundme:min="1"
             aroundme:unitsLeft=""
-            aroundme:unitsRight=" km"
-            aroundme:interval="1" />
+            aroundme:unitsRight=" km" />
+
+        <CheckBoxPreference
+            android:key="@string/prefs_radius_checkbox_key"
+            android:summary="@string/prefs_radius_checkbox_summary"
+            android:title="@string/prefs_radius_checkbox_title"
+            android:defaultValue="true" />
     </PreferenceCategory>
-    
     <PreferenceCategory
         android:key="pref_key_about"
         android:title="@string/prefs_category_about" >

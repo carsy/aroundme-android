@@ -28,10 +28,9 @@ public class SeekBarPreference extends Preference implements
 	private int mMinValue;
 	private int mInterval;
 	private int mCurrentValue;
-	private String mUnitsLeft = "";
-	private String mUnitsRight = "";
+	private String mUnitsLeft;
+	private String mUnitsRight;
 	private SeekBar mSeekBar;
-
 	private TextView mStatusText;
 
 	public SeekBarPreference(Context context, AttributeSet attrs) {

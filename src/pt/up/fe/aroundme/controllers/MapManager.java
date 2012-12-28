@@ -4,6 +4,7 @@ import pt.up.fe.aroundme.R;
 import pt.up.fe.aroundme.activities.MapActivity;
 import pt.up.fe.aroundme.models.Landmark;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
@@ -36,6 +37,7 @@ public class MapManager {
 
 	private final UserLocationManager userlocationManager;
 	private final AroundMeController aroundmeController;
+	private final SharedPreferences sharedPreferences;
 
 	public MapManager(MapActivity mainActivity, GoogleMap map) {
 		this.map = map;
@@ -45,6 +47,10 @@ public class MapManager {
 		this.userlocationManager = new UserLocationManager(this,
 				(LocationManager) this.parentActivity
 						.getSystemService(Context.LOCATION_SERVICE));
+
+		this.sharedPreferences = PreferenceManager
+				.getDefaultSharedPreferences(this.parentActivity
+						.getApplicationContext());
 
 	}
 
@@ -81,9 +87,11 @@ public class MapManager {
 
 	public void updateRadius() {
 
-		this.radiusValue = PreferenceManager.getDefaultSharedPreferences(
-				this.parentActivity.getApplicationContext()).getInt("radius",
+		this.radiusValue = sharedPreferences.getInt("radius",
 				R.integer.radius_default);
+
+		if (!sharedPreferences.getBoolean("radius_checkbox_key", true))
+			return;
 
 		double R = 6371d; // earth's mean radius in km
 		double d = this.radiusValue / R; // radius given in km
@@ -105,8 +113,8 @@ public class MapManager {
 		if (this.radiusPolyline != null)
 			this.radiusPolyline.remove();
 
-		this.radiusPolyline = this.map.addPolyline(options.color(Color.BLUE)
-				.width(1));
+		this.radiusPolyline = this.map.addPolyline(options.color(Color.LTGRAY)
+				.width(2));
 	}
 
 	public void snapUsersPosition(View view) {
