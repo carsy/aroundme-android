@@ -10,22 +10,23 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import pt.up.fe.aroundme.activities.AroundMeController;
+import pt.up.fe.aroundme.controllers.AroundMeController;
 import android.os.AsyncTask;
 import android.util.Log;
 
 public class DownloadJSONTask extends AsyncTask<URI, Integer, String> {
-	protected AroundMeController aroundMeConnection;
+	protected AroundMeController aroundMeController;
 
 	public DownloadJSONTask(AroundMeController aroundMeController) {
-		this.aroundMeConnection = aroundMeController;
+		this.aroundMeController = aroundMeController;
 	}
 
+	@Override
 	protected String doInBackground(URI... uris) {
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpResponse response;
 		String responseString = null;
-		
+
 		try {
 			response = httpclient.execute(new HttpGet(uris[0]));
 			StatusLine statusLine = response.getStatusLine();
@@ -39,7 +40,7 @@ public class DownloadJSONTask extends AsyncTask<URI, Integer, String> {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			Log.e(this.toString(), "Download error. Aborting.");
+			Log.e(this.toString(), "Download error. Aborting.", e);
 		}
 
 		return responseString;

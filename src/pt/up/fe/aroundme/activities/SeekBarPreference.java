@@ -21,12 +21,12 @@ public class SeekBarPreference extends Preference implements
 	private final String TAG = getClass().getName();
 
 	private static final String ANDROIDNS = "http://schemas.android.com/apk/res/android";
-	private static final String ROBOBUNNYNS = "http://robobunny.com";
-	private static final int DEFAULT_VALUE = 50;
+	private static final String AROUNDMENS = "http://around-me.herokuapp.com";
+	private static final int DEFAULT_VALUE = 25;
 
-	private int mMaxValue = 100;
-	private int mMinValue = 0;
-	private int mInterval = 1;
+	private int mMaxValue;
+	private int mMinValue;
+	private int mInterval;
 	private int mCurrentValue;
 	private String mUnitsLeft = "";
 	private String mUnitsRight = "";
@@ -53,17 +53,16 @@ public class SeekBarPreference extends Preference implements
 
 	private void setValuesFromXml(AttributeSet attrs) {
 		mMaxValue = attrs.getAttributeIntValue(ANDROIDNS, "max", 100);
-		mMinValue = attrs.getAttributeIntValue(ROBOBUNNYNS, "min", 0);
+		mMinValue = attrs.getAttributeIntValue(AROUNDMENS, "min", 0);
 
-		mUnitsLeft = getAttributeStringValue(attrs, ROBOBUNNYNS, "unitsLeft",
-				"");
-		String units = getAttributeStringValue(attrs, ROBOBUNNYNS, "units", "");
-		mUnitsRight = getAttributeStringValue(attrs, ROBOBUNNYNS, "unitsRight",
+		mUnitsLeft = getAttributeStringValue(attrs, AROUNDMENS, "unitsLeft", "");
+		String units = getAttributeStringValue(attrs, AROUNDMENS, "units", "");
+		mUnitsRight = getAttributeStringValue(attrs, AROUNDMENS, "unitsRight",
 				units);
 
 		try {
-			String newInterval = attrs.getAttributeValue(ROBOBUNNYNS,
-					"interval");
+			String newInterval = attrs
+					.getAttributeValue(AROUNDMENS, "interval");
 			if (newInterval != null)
 				mInterval = Integer.parseInt(newInterval);
 		} catch (Exception e) {

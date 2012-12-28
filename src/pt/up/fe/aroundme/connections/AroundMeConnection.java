@@ -2,7 +2,7 @@ package pt.up.fe.aroundme.connections;
 
 import java.net.URI;
 
-import pt.up.fe.aroundme.activities.AroundMeController;
+import pt.up.fe.aroundme.controllers.AroundMeController;
 import android.location.Location;
 import android.util.Log;
 
@@ -15,12 +15,11 @@ public class AroundMeConnection {
 	private static final String FORMAT_XML = ".xml";
 
 	private static final String GET_LANDMARKS = "/landmarks";
-
 	private static final String GET_LANDMARKS_JSON = GET_LANDMARKS
 			+ FORMAT_JSON;
 	private static final String GET_LANDMARKS_XML = GET_LANDMARKS + FORMAT_XML;
 
-	private AroundMeController aroundMeController;
+	private final AroundMeController aroundMeController;
 
 	public AroundMeConnection(AroundMeController aroundMeController) {
 		this.aroundMeController = aroundMeController;
@@ -33,7 +32,7 @@ public class AroundMeConnection {
 			new DownloadJSONTask(aroundMeController) {
 				@Override
 				protected void onPostExecute(String landmarksJSON) {
-					this.aroundMeConnection.loadLandmarks(landmarksJSON);
+					this.aroundMeController.loadLandmarks(landmarksJSON);
 				}
 			}.execute(uri);
 		} catch (Exception e) {
@@ -43,11 +42,6 @@ public class AroundMeConnection {
 
 	}
 
-	private String getLandmarksRadiusQuery(Location userLocation, Integer radius) {
-		return "radius=" + radius + "&longitude=" + userLocation.getLongitude()
-				+ "&latitude=" + userLocation.getLatitude();
-	}
-
 	public void fetchLandmark(String username) {
 		URI uri;
 		try {
@@ -55,7 +49,7 @@ public class AroundMeConnection {
 			new DownloadJSONTask(aroundMeController) {
 				@Override
 				protected void onPostExecute(String landmarksJSON) {
-					this.aroundMeConnection.addLandmark(landmarksJSON);
+					this.aroundMeController.addLandmark(landmarksJSON);
 				}
 			}.execute(uri);
 		} catch (Exception e) {
@@ -63,6 +57,11 @@ public class AroundMeConnection {
 			Log.e(this.toString(), "URL error. Landmark " + username
 					+ " fetching aborted.");
 		}
+	}
+
+	private String getLandmarksRadiusQuery(Location userLocation, Integer radius) {
+		return "radius=" + radius + "&longitude=" + userLocation.getLongitude()
+				+ "&latitude=" + userLocation.getLatitude();
 	}
 
 	private String getLandmarkPath(String username) {

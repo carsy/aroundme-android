@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:robobunny="http://robobunny.com"
+    xmlns:aroundme="http://around-me.herokuapp.com"
     android:key="preference_screen" >
 
     <PreferenceCategory
@@ -13,9 +13,10 @@
             android:max="50"
             android:summary="@string/prefs_radius_summary"
             android:title="@string/prefs_radius_title"
-            robobunny:min="1"
-            robobunny:unitsLeft=""
-            robobunny:unitsRight=" km" />
+            aroundme:min="1"
+            aroundme:unitsLeft=""
+            aroundme:unitsRight=" km"
+            aroundme:interval="1" />
     </PreferenceCategory>
     
     <PreferenceCategory

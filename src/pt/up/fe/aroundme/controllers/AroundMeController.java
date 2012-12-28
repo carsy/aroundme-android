@@ -1,6 +1,5 @@
-package pt.up.fe.aroundme.activities;
+package pt.up.fe.aroundme.controllers;
 
-import java.util.ArrayList;
 import java.util.Locale;
 
 import pt.up.fe.aroundme.connections.AroundMeConnection;
@@ -13,15 +12,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class AroundMeController {
-	private AroundMeConnection aroundMeConnection;
-	ArrayList<Landmark> loadedLandmarks;
-	private MainActivity mainActivity;
-	private Gson gson;
+	private final AroundMeConnection aroundMeConnection;
+	private final Gson gson;
 
-	public AroundMeController(MainActivity mainActivity) {
-		this.loadedLandmarks = new ArrayList<Landmark>();
+	private final MapManager mapManager;
+
+	public AroundMeController(MapManager mapManager) {
 		this.aroundMeConnection = new AroundMeConnection(this);
-		this.mainActivity = mainActivity;
+		this.mapManager = mapManager;
 		this.gson = new GsonBuilder().setFieldNamingPolicy(
 				FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
 	}
@@ -31,6 +29,9 @@ public class AroundMeController {
 	}
 
 	public void loadLandmarks(String landmarksJSON) {
+
+		Log.d("loadLandmarks()", landmarksJSON);
+
 		Landmark[] landmarks = this.gson.fromJson(landmarksJSON,
 				Landmark[].class);
 
@@ -41,13 +42,11 @@ public class AroundMeController {
 	}
 
 	public void addLandmark(String landmarkJSON) {
-		Landmark landmark = this.gson.fromJson(landmarkJSON,
-				Landmark.class);
+		Landmark landmark = this.gson.fromJson(landmarkJSON, Landmark.class);
 
 		Log.d("addLandmark", landmark.getUsername());
 
-		this.loadedLandmarks.add(landmark);
-		mainActivity.addLandmarkMarker(landmark);
+		this.mapManager.addLandmarkMarker(landmark);
 	}
 
 }
