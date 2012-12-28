@@ -117,6 +117,10 @@ public class MapActivity extends FragmentActivity {
 		this.mapManager.snapUsersPosition(view);
 	}
 
+	public void onClickMapTypeButton(View view) {
+		this.mapManager.toggleMapType(view);
+	}
+
 	private void menuRefresh() {
 		this.mapManager.update();
 	}

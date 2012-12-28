@@ -51,7 +51,6 @@ public class MapManager {
 		this.sharedPreferences = PreferenceManager
 				.getDefaultSharedPreferences(this.parentActivity
 						.getApplicationContext());
-
 	}
 
 	// MAP UPDATE METHODS
@@ -117,6 +116,8 @@ public class MapManager {
 				.width(2));
 	}
 
+	// Buttons event handlers
+
 	public void snapUsersPosition(View view) {
 		if (this.userCameraPosition == null) {
 			this.userCameraPosition = new CameraPosition.Builder()
@@ -129,6 +130,13 @@ public class MapManager {
 				CameraUpdateFactory.newCameraPosition(this.userCameraPosition),
 				MapManager.SNAP_ANIMATION_DURATION, null);
 	}
+
+	public void toggleMapType(View view) {
+		this.map.setMapType(this.map.getMapType() == GoogleMap.MAP_TYPE_NORMAL ? GoogleMap.MAP_TYPE_HYBRID
+				: GoogleMap.MAP_TYPE_NORMAL);
+	}
+
+	// Callback for AsyncTasks (DownloadJSONTask)
 
 	void addLandmarkMarker(Landmark landmark) {
 		this.map.addMarker(new MarkerOptions()

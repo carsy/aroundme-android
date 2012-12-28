@@ -12,14 +12,31 @@
         tools:context=".MainActivity" >
     </fragment>
 
-    <ImageButton
-        android:id="@+id/snapUserPostionButton"
+    <RelativeLayout
+        android:id="@+id/sideButtons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:contentDescription="@string/menu_snap_user_position"
-        android:onClick="@string/on_click_snap_users_position"
-        android:scaleType="centerInside"
-        android:src="@drawable/snap_user_location" />
+        android:layout_gravity="right" >
+
+        <ImageButton
+            android:id="@+id/snapUserPostionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="false"
+            android:layout_gravity="right"
+            android:contentDescription="@string/menu_snap_user_position"
+            android:onClick="@string/on_click_snap_users_position"
+            android:src="@drawable/snap_user_location" />
+
+        <ImageButton
+            android:id="@+id/mapTypeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/snapUserPostionButton"
+            android:contentDescription="@string/map_type_button_description"
+            android:onClick="@string/on_click_map_type_button"
+            android:src="@drawable/location_map" />
+
+    </RelativeLayout>
 
 </FrameLayout>
