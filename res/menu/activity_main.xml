@@ -1,10 +1,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/menu_snap_user_position"
+        android:id="@+id/menu_list_landmarks"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="@string/menu_snap_user_position"/>
+        android:title="@string/list_landmarks"/>
     <item
         android:id="@+id/menu_refresh"
         android:orderInCategory="100"

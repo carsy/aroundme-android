@@ -30,12 +30,13 @@ public class DownloadJSONTask extends AsyncTask<URI, Integer, String> {
 		try {
 			response = httpclient.execute(new HttpGet(uris[0]));
 			StatusLine statusLine = response.getStatusLine();
-			if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
+			if( statusLine.getStatusCode() == HttpStatus.SC_OK ) {
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
 				response.getEntity().writeTo(out);
 				out.close();
 				responseString = out.toString();
-			} else {
+			}
+			else {
 				response.getEntity().getContent().close();
 			}
 		} catch (Exception e) {

@@ -1,4 +1,4 @@
-package pt.up.fe.aroundme.controllers;
+package pt.up.fe.aroundme.android;
 
 import android.location.Criteria;
 import android.location.Location;
@@ -8,13 +8,15 @@ import android.os.Bundle;
 import android.util.Log;
 
 public class UserLocationManager implements LocationListener {
-	private final LocationManager locationManager;
 	private String locationProvider;
 	private Location userLocation;
 
 	private final MapManager mapManager;
 
-	UserLocationManager(MapManager mapManager, LocationManager locationManager) {
+	private final LocationManager locationManager;
+
+	UserLocationManager(final MapManager mapManager,
+			final LocationManager locationManager) {
 		this.mapManager = mapManager;
 
 		this.locationManager = locationManager;
@@ -23,38 +25,40 @@ public class UserLocationManager implements LocationListener {
 	}
 
 	@Override
-	public void onLocationChanged(Location location) {
+	public void onLocationChanged(final Location location) {
 		this.userLocation = new Location(location);
 		this.mapManager.update();
 	}
 
 	@Override
-	public void onProviderDisabled(String provider) {
+	public void onProviderDisabled(final String provider) {
 		this.updateLocationProvider();
 
 	}
 
 	@Override
-	public void onProviderEnabled(String provider) {
+	public void onProviderEnabled(final String provider) {
 		this.updateLocationProvider();
 	}
 
 	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) {
+	public void onStatusChanged(final String provider, final int status,
+			final Bundle extras) {
 		Log.d(provider, "provider status changed to => " + status);
 	}
 
 	private Location updateLastKnownLocation() {
-		return this.userLocation = this.locationManager
-				.getLastKnownLocation(this.locationProvider);
+		return this.userLocation =
+				this.locationManager
+						.getLastKnownLocation(this.locationProvider);
 	}
 
 	private String updateLocationProvider() {
-		Criteria criteria = new Criteria();
+		final Criteria criteria = new Criteria();
 		criteria.setCostAllowed(false);
 
-		return this.locationProvider = this.locationManager.getBestProvider(
-				criteria, true);
+		return this.locationProvider =
+				this.locationManager.getBestProvider(criteria, true);
 	}
 
 	public void requestLocationUpdates() {
@@ -69,15 +73,15 @@ public class UserLocationManager implements LocationListener {
 	// GETTERS
 
 	public Location getLocation() {
-		return userLocation;
+		return this.userLocation;
 	}
 
 	public double getLatitude() {
-		return userLocation.getLatitude();
+		return this.userLocation.getLatitude();
 	}
 
 	public double getLongitude() {
-		return userLocation.getLongitude();
+		return this.userLocation.getLongitude();
 	}
 
 }

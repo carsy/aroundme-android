@@ -1,90 +1,134 @@
 package pt.up.fe.aroundme.models;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
+@DatabaseTable
 public class Event {
 
+	@DatabaseField
 	private String createdAt;
+
+	@DatabaseField
 	private String description;
+
+	@DatabaseField
 	private String endTime;
+
+	@DatabaseField
 	private String fbId;
+
+	@DatabaseField(id = true)
 	private Integer id;
+
+	@DatabaseField
 	private Boolean isDateOnly;
+
+	@DatabaseField
 	private Integer landmarkId;
+
+	@DatabaseField
 	private String location;
+
+	@DatabaseField
 	private String name;
+
+	@DatabaseField
 	private String ownerCategory;
+
+	@DatabaseField
 	private String ownerName;
+
+	@DatabaseField
 	private String pictureUrl;
+
+	@DatabaseField
 	private String privacy;
+
+	@DatabaseField
 	private String startTime;
+
+	@DatabaseField
 	private String timeZone;
+
+	@DatabaseField
 	private String updatedAt;
+
+	@DatabaseField
 	private String updatedTime;
 
+	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+	private Landmark landmark;
+
 	public String getCreatedAt() {
-		return createdAt;
+		return this.createdAt;
 	}
 
 	public String getDescription() {
-		return description;
+		return this.description;
 	}
 
 	public String getEndTime() {
-		return endTime;
+		return this.endTime;
 	}
 
 	public String getFbId() {
-		return fbId;
+		return this.fbId;
 	}
 
 	public Integer getId() {
-		return id;
+		return this.id;
 	}
 
 	public Boolean getIsDateOnly() {
-		return isDateOnly;
+		return this.isDateOnly;
 	}
 
 	public Integer getLandmarkId() {
-		return landmarkId;
+		return this.landmarkId;
 	}
 
 	public String getLocation() {
-		return location;
+		return this.location;
 	}
 
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	public String getOwnerCategory() {
-		return ownerCategory;
+		return this.ownerCategory;
 	}
 
 	public String getOwnerName() {
-		return ownerName;
+		return this.ownerName;
 	}
 
 	public String getPictureUrl() {
-		return pictureUrl;
+		return this.pictureUrl;
 	}
 
 	public String getPrivacy() {
-		return privacy;
+		return this.privacy;
 	}
 
 	public String getStartTime() {
-		return startTime;
+		return this.startTime;
 	}
 
 	public String getTimeZone() {
-		return timeZone;
+		return this.timeZone;
 	}
 
 	public String getUpdatedAt() {
-		return updatedAt;
+		return this.updatedAt;
 	}
 
 	public String getUpdatedTime() {
-		return updatedTime;
+		return this.updatedTime;
+	}
+
+	public Landmark getLandmark() {
+		return this.landmark;
 	}
 }

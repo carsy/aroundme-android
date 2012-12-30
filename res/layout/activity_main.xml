@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="false"
             android:layout_gravity="right"
-            android:contentDescription="@string/menu_snap_user_position"
+            android:contentDescription="@string/list_landmarks"
             android:onClick="@string/on_click_snap_users_position"
             android:src="@drawable/snap_user_location" />
 
