@@ -6,7 +6,6 @@ import pt.up.fe.aroundme.controllers.AroundMeController;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.location.Location;
 import android.location.LocationManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -163,10 +162,6 @@ public class MapManager {
 	}
 
 	// Getters
-
-	public Location getUserLocation() {
-		return this.userlocationManager.getLocation();
-	}
 
 	public Integer getRadiusValue() {
 		return this.radiusValue;

@@ -72,15 +72,15 @@ public class UserLocationManager implements LocationListener {
 
 	// GETTERS
 
-	public Location getLocation() {
+	public Location getLocation() { // TODO throw UserLocationIsNullException
 		return this.userLocation;
 	}
 
-	public double getLatitude() {
+	public double getLatitude() { // TODO throw UserLocationIsNullException
 		return this.userLocation.getLatitude();
 	}
 
-	public double getLongitude() {
+	public double getLongitude() { // TODO throw UserLocationIsNullException
 		return this.userLocation.getLongitude();
 	}
 

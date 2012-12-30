@@ -38,7 +38,6 @@ public class MapActivity extends FragmentActivity {
 	protected void onStart() {
 		super.onStart();
 		this.mapManager.requestLocationUpdates();
-		this.mapManager.update();
 
 		Log.d(this.CLASS_NAME, "onStart()");
 	}
