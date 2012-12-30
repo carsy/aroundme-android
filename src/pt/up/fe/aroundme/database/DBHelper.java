@@ -20,12 +20,18 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
 
 	private static final int DATABASE_VERSION = 1;
 
+	private static DBHelper instance;
+
 	// the DAO objects
 	private Dao<Landmark, Integer> landmarkDao = null;
 	private Dao<Event, Integer> eventDAO = null;
 
-	public DBHelper(final Context context) {
+	private DBHelper(final Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+	}
+
+	public static DBHelper getInstance(final Context context) {
+		return instance == null ? instance = new DBHelper(context) : instance;
 	}
 
 	@Override

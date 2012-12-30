@@ -23,7 +23,7 @@ public class AroundMeController {
 	private final LandmarksController landmarksController;
 	private final Gson gson;
 
-	private final List<Landmark> loadedLandmarks;
+	private List<Landmark> loadedLandmarks;
 
 	public AroundMeController(final MapManager mapManager) {
 		this.mapManager = mapManager;
@@ -43,9 +43,12 @@ public class AroundMeController {
 	// FIXME make this func prettier
 	public void refreshLandmarks(final Location userLocation, final int radius) {
 		final List<Landmark> landmarks2Remove = new ArrayList<Landmark>();
+		this.loadedLandmarks =
+				Collections.synchronizedList(new ArrayList<Landmark>());
 
 		for(final Landmark landmark: this.loadedLandmarks) {
-			if( !this.isInRadius(landmark, userLocation, radius) ) {
+			if( !this.landmarksController.isInRadius(landmark, userLocation,
+					radius) ) {
 				landmarks2Remove.add(landmark);
 				Log.d("refreshLandmarks(): landmark2remove added", landmark
 						.getUsername()
@@ -53,7 +56,7 @@ public class AroundMeController {
 			}
 		}
 		for(final Landmark landmark: landmarks2Remove) {
-			this.loadedLandmarks.remove(landmark);
+			// this.loadedLandmarks.remove(landmark);
 			this.mapManager.removeMarker(landmark.getId());
 
 			Log.d("refreshLandmarks(): landmark2remove removed", landmark
@@ -62,8 +65,8 @@ public class AroundMeController {
 		}
 
 		final List<Landmark> cachedLandmarks =
-				this.landmarksController.getLandmarksByRadius(userLocation
-						.getLatitude(), userLocation.getLongitude(), radius);
+				this.landmarksController.getLandmarksByRadius(userLocation,
+						radius);
 		Log.d("refreshLandmarks(): cachedLandmarks", cachedLandmarks.size()
 				+ " | " + this.loadedLandmarks.addAll(cachedLandmarks));
 
@@ -73,20 +76,19 @@ public class AroundMeController {
 		else {
 			// TODO warn mapActivity
 		}
+		Log.d("refreshLandmarks(): loadedLandmarks", this.loadedLandmarks
+				.size()
+				+ "");
 
 		for(final Landmark landmark: this.loadedLandmarks) {
 			if( !landmarks2Remove.contains(landmark) ) {
 				this.mapManager.addMarker(landmark.getId(), landmark
 						.getLocationLatitude(),
 						landmark.getLocationLongitude(), landmark.getName());
+				Log.d("refreshLandmarks(): marker added", landmark
+						.getUsername());
 			}
 		}
-	}
-
-	private boolean isInRadius(final Landmark landmark,
-			final Location userLocation, final Integer radius) {
-		// TODO distance between landmark pos and userlocation < radius ?
-		return true;
 	}
 
 	// Callback for connections

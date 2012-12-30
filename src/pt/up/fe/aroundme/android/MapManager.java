@@ -89,11 +89,10 @@ public class MapManager {
 	}
 
 	public void updateRadius() {
-		Log.d("updateRadius()", this.radiusValue + "");
-
 		this.radiusValue =
 				this.sharedPreferences.getInt("radius",
 						R.integer.radius_default);
+		Log.d("updateRadius()", this.radiusValue + "");
 
 		// FIXME refactor radius_checkbox_key string
 		if( !this.sharedPreferences.getBoolean("radius_checkbox_key", true) ) { return; }

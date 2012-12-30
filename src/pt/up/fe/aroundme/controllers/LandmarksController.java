@@ -4,21 +4,19 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import pt.up.fe.aroundme.database.DBManager;
+import pt.up.fe.aroundme.database.DBHelper;
 import pt.up.fe.aroundme.models.Landmark;
 import android.content.Context;
+import android.location.Location;
 
 import com.j256.ormlite.dao.Dao;
 
 public class LandmarksController {
 
-	private final DBManager dbManager;
 	private final Dao<Landmark, Integer> landmarkDao;
 
 	public LandmarksController(final Context context) {
-		this.dbManager = DBManager.getInstance(context);
-
-		this.landmarkDao = this.dbManager.getHelper().getLandmarkDao();
+		this.landmarkDao = DBHelper.getInstance(context).getLandmarkDao();
 	}
 
 	// CRUD METHODS
@@ -77,10 +75,18 @@ public class LandmarksController {
 		}
 	}
 
-	public List<Landmark> getLandmarksByRadius(final double latitude,
-			final double longitude, final Integer radius) {
-		// TODO query db for landmarks around user
-		return this.getAllLandmarks();
+	public List<Landmark> getLandmarksByRadius(final Location userLocation,
+			final Integer radius) {
+		final List<Landmark> landmarksInRadius = new ArrayList<Landmark>();
+		final List<Landmark> allLandmarks = this.getAllLandmarks();
+
+		for(final Landmark landmark: allLandmarks) {
+			if( this.isInRadius(landmark, userLocation, radius) ) {
+				landmarksInRadius.add(landmark);
+			}
+		}
+
+		return landmarksInRadius;
 	}
 
 	public List<Landmark> getLandmarksById(final int[] landmarksId) {
@@ -96,4 +102,27 @@ public class LandmarksController {
 		return landmarks;
 	}
 
+	protected boolean isInRadius(final Landmark landmark,
+			final Location userLocation, final Integer radius) {
+		final double R = 6371.0; // earth's mean radius in km
+
+		final double landmarkLatitude = landmark.getLocationLatitude(), landmarkLongitude =
+				landmark.getLocationLongitude();
+		final double userLatitude = userLocation.getLatitude(), userLongitude =
+				userLocation.getLongitude();
+
+		final double diffLatitude =
+				Math.toRadians(landmarkLatitude - userLatitude), diffLongitude =
+				Math.toRadians(landmarkLongitude - userLongitude);
+
+		final double a =
+				Math.pow(Math.sin(diffLatitude / 2.0), 2.0)
+						+ Math.cos(Math.toRadians(userLatitude))
+						* Math.cos(Math.toRadians(landmarkLatitude))
+						* Math.pow(Math.sin(diffLongitude / 2.0), 2.0);
+		final double distance =
+				R * 2.0 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+		return distance <= radius;
+	}
 }

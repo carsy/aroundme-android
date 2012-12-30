@@ -3,20 +3,17 @@ package pt.up.fe.aroundme.controllers;
 import java.sql.SQLException;
 import java.util.List;
 
-import pt.up.fe.aroundme.database.DBManager;
+import pt.up.fe.aroundme.database.DBHelper;
 import pt.up.fe.aroundme.models.Event;
 import android.content.Context;
 
 import com.j256.ormlite.dao.Dao;
 
 public class EventsController {
-	private final DBManager dbManager;
 	private final Dao<Event, Integer> eventDao;
 
 	public EventsController(final Context context) {
-		this.dbManager = DBManager.getInstance(context);
-
-		this.eventDao = this.dbManager.getHelper().getEventDao();
+		this.eventDao = DBHelper.getInstance(context).getEventDao();
 	}
 
 	// CRUD METHODS
