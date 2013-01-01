@@ -23,9 +23,11 @@ public class AroundMeController {
 	private final LandmarksController landmarksController;
 	private final Gson gson;
 
+	// TODO move to Landmark ?
 	private List<Landmark> loadedLandmarks;
 
 	public AroundMeController(final MapManager mapManager) {
+
 		this.mapManager = mapManager;
 
 		this.aroundMeConnection = new AroundMeConnection(this);
@@ -40,7 +42,7 @@ public class AroundMeController {
 				Collections.synchronizedList(new ArrayList<Landmark>());
 	}
 
-	// FIXME make this func prettier
+	// FIXME make this function prettier
 	public void refreshLandmarks(final Location userLocation, final int radius) {
 		final List<Landmark> landmarks2Remove = new ArrayList<Landmark>();
 		this.loadedLandmarks =
@@ -125,8 +127,8 @@ public class AroundMeController {
 		}
 	}
 
-	// landmarkJSON is never null
 	public void addLandmark(final String landmarkJSON) {
+		// landmarkJSON is never null
 		final Landmark landmark =
 				this.gson.fromJson(landmarkJSON, Landmark.class);
 

@@ -17,21 +17,21 @@ import android.util.Log;
 public class DownloadJSONTask extends AsyncTask<URI, Integer, String> {
 	protected AroundMeController aroundMeController;
 
-	public DownloadJSONTask(AroundMeController aroundMeController) {
+	public DownloadJSONTask(final AroundMeController aroundMeController) {
 		this.aroundMeController = aroundMeController;
 	}
 
 	@Override
-	protected String doInBackground(URI... uris) {
-		HttpClient httpclient = new DefaultHttpClient();
+	protected String doInBackground(final URI... uris) {
+		final HttpClient httpclient = new DefaultHttpClient();
 		HttpResponse response;
 		String responseString = null;
 
 		try {
 			response = httpclient.execute(new HttpGet(uris[0]));
-			StatusLine statusLine = response.getStatusLine();
+			final StatusLine statusLine = response.getStatusLine();
 			if( statusLine.getStatusCode() == HttpStatus.SC_OK ) {
-				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				final ByteArrayOutputStream out = new ByteArrayOutputStream();
 				response.getEntity().writeTo(out);
 				out.close();
 				responseString = out.toString();
@@ -39,7 +39,7 @@ public class DownloadJSONTask extends AsyncTask<URI, Integer, String> {
 			else {
 				response.getEntity().getContent().close();
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			Log.e(this.toString(), "Download error. Aborting.", e);
 		}

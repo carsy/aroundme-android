@@ -1,5 +1,6 @@
 package pt.up.fe.aroundme.android;
 
+import pt.up.fe.aroundme.android.exceptions.UserLocationIsNullException;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -8,6 +9,9 @@ import android.os.Bundle;
 import android.util.Log;
 
 public class UserLocationManager implements LocationListener {
+	private static final int LOCATION_UPDATE_MINDISTANCE = 1;
+	private static final int LOCATION_UPDATES_MINTIME = 400;
+
 	private String locationProvider;
 	private Location userLocation;
 
@@ -27,13 +31,17 @@ public class UserLocationManager implements LocationListener {
 	@Override
 	public void onLocationChanged(final Location location) {
 		this.userLocation = new Location(location);
-		this.mapManager.update();
+		try {
+			this.mapManager.update();
+		} catch (final UserLocationIsNullException e) {
+			Log.d("onLocationChanged()", "wtf: location is null");
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void onProviderDisabled(final String provider) {
 		this.updateLocationProvider();
-
 	}
 
 	@Override
@@ -62,8 +70,8 @@ public class UserLocationManager implements LocationListener {
 	}
 
 	public void requestLocationUpdates() {
-		this.locationManager.requestLocationUpdates(this.locationProvider, 400,
-				1, this);
+		this.locationManager.requestLocationUpdates(this.locationProvider,
+				LOCATION_UPDATES_MINTIME, LOCATION_UPDATE_MINDISTANCE, this);
 	}
 
 	public void removeUpdates() {
@@ -72,15 +80,21 @@ public class UserLocationManager implements LocationListener {
 
 	// GETTERS
 
-	public Location getLocation() { // TODO throw UserLocationIsNullException
+	public Location getLocation() throws UserLocationIsNullException {
+		if( this.userLocation == null ) { throw new UserLocationIsNullException(); }
+
 		return this.userLocation;
 	}
 
-	public double getLatitude() { // TODO throw UserLocationIsNullException
+	public double getLatitude() throws UserLocationIsNullException {
+		if( this.userLocation == null ) { throw new UserLocationIsNullException(); }
+
 		return this.userLocation.getLatitude();
 	}
 
-	public double getLongitude() { // TODO throw UserLocationIsNullException
+	public double getLongitude() throws UserLocationIsNullException {
+		if( this.userLocation == null ) { throw new UserLocationIsNullException(); }
+
 		return this.userLocation.getLongitude();
 	}
 

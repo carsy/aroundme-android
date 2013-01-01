@@ -2,6 +2,7 @@ package pt.up.fe.aroundme.android;
 
 import pt.up.fe.aroundme.R;
 import pt.up.fe.aroundme.android.activities.MapActivity;
+import pt.up.fe.aroundme.android.exceptions.UserLocationIsNullException;
 import pt.up.fe.aroundme.controllers.AroundMeController;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -56,20 +57,19 @@ public class MapManager {
 				PreferenceManager.getDefaultSharedPreferences(this
 						.getMapActivity().getApplicationContext());
 		this.loadedMarkers = new SparseArray<MarkerOptions>();
-
-		this.update();
 	}
 
 	// MAP UPDATE METHODS
 
-	public void update() { // order of updates IS RELEVANT
+	public void update() throws UserLocationIsNullException {
+		// order of updates IS RELEVANT
 		this.map.clear();
 		this.updateUserMarker();
 		this.updateRadius();
 		this.updateLandmarksMarkers();
 	}
 
-	public void updateUserMarker() {
+	public void updateUserMarker() throws UserLocationIsNullException {
 		Log.d("updateUserMarker()", "Location = ("
 				+ this.userlocationManager.getLatitude() + ","
 				+ this.userlocationManager.getLongitude() + ")");
@@ -81,13 +81,14 @@ public class MapManager {
 						.fromResource(R.drawable.location_user)));
 	}
 
-	public void updateLandmarksMarkers() {
+	public void updateLandmarksMarkers() throws UserLocationIsNullException {
 		Log.d("updateLandmarksMarkers()", this.loadedMarkers.size() + "");
+		this.loadedMarkers.clear();
 		this.aroundmeController.refreshLandmarks(this.userlocationManager
 				.getLocation(), this.radiusValue);
 	}
 
-	public void updateRadius() {
+	public void updateRadius() throws UserLocationIsNullException {
 		this.radiusValue =
 				this.sharedPreferences.getInt("radius",
 						R.integer.radius_default);
@@ -129,7 +130,8 @@ public class MapManager {
 
 	// Buttons event handlers
 
-	public void snapUsersPosition(final View view) {
+	public void snapUsersPosition(final View view)
+			throws UserLocationIsNullException {
 		if( this.userCameraPosition == null ) {
 			this.userCameraPosition =
 					new CameraPosition.Builder().target(
@@ -186,7 +188,7 @@ public class MapManager {
 			}
 		}
 
-		Log.d("checks", "size = " + loadedMarkersSize + " | i = " + --i);
+		Log.d("checks", "size = " + loadedMarkersSize + " | i = " + i);
 
 		return landmarksId;
 	}

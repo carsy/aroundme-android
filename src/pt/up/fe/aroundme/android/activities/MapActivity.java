@@ -2,6 +2,7 @@ package pt.up.fe.aroundme.android.activities;
 
 import pt.up.fe.aroundme.R;
 import pt.up.fe.aroundme.android.MapManager;
+import pt.up.fe.aroundme.android.exceptions.UserLocationIsNullException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 public class MapActivity extends FragmentActivity {
 	private final String CLASS_NAME = this.getClass().getSimpleName();
@@ -28,7 +30,7 @@ public class MapActivity extends FragmentActivity {
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
 		this.mapManager = new MapManager(this);
-		this.mapManager.snapUsersPosition(this.getCurrentFocus());
+		this.snapUsersPosition(this.getCurrentFocus());
 
 		Log.d(this.CLASS_NAME, "onCreate()");
 	}
@@ -130,7 +132,13 @@ public class MapActivity extends FragmentActivity {
 	}
 
 	private void menuRefresh() {
-		this.mapManager.update();
+		try {
+			this.mapManager.updateLandmarksMarkers();
+		} catch (final UserLocationIsNullException e) {
+			Toast.makeText(this.getApplicationContext(),
+					"Waiting for location...", Toast.LENGTH_SHORT).show();
+			e.printStackTrace();
+		}
 	}
 
 	private void menuSettings() {
@@ -138,16 +146,27 @@ public class MapActivity extends FragmentActivity {
 				SettingsActivity.class));
 	}
 
+	// TODO create about activity
 	private void menuAbout() {}
 
 	// onClick Buttons' Handlers
 
 	public void onClickSnapUsersPositionButton(final View view) {
-		this.mapManager.snapUsersPosition(view);
+		this.snapUsersPosition(view);
 	}
 
 	public void onClickMapTypeButton(final View view) {
 		this.mapManager.toggleMapType(view);
+	}
+
+	private void snapUsersPosition(final View view) {
+		try {
+			this.mapManager.snapUsersPosition(view);
+		} catch (final UserLocationIsNullException e) {
+			Toast.makeText(this.getApplicationContext(),
+					"Waiting for location...", Toast.LENGTH_SHORT).show();
+			e.printStackTrace();
+		}
 	}
 
 	// Device Network State
