@@ -1,21 +1,20 @@
-package pt.up.fe.aroundme.controllers;
+package pt.up.fe.aroundme.database;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import pt.up.fe.aroundme.database.DBHelper;
 import pt.up.fe.aroundme.models.Landmark;
 import android.content.Context;
 import android.location.Location;
 
 import com.j256.ormlite.dao.Dao;
 
-public class LandmarksController {
+public class LandmarksDAO {
 
 	private final Dao<Landmark, Integer> landmarkDao;
 
-	public LandmarksController(final Context context) {
+	public LandmarksDAO(final Context context) {
 		this.landmarkDao = DBHelper.getInstance(context).getLandmarkDao();
 	}
 
@@ -102,7 +101,7 @@ public class LandmarksController {
 		return landmarks;
 	}
 
-	protected boolean isInRadius(final Landmark landmark,
+	public boolean isInRadius(final Landmark landmark,
 			final Location userLocation, final Integer radius) {
 		final double R = 6371.0; // earth's mean radius in km
 

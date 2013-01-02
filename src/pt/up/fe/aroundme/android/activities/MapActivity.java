@@ -175,7 +175,15 @@ public class MapActivity extends FragmentActivity {
 				((ConnectivityManager) this
 						.getSystemService(Context.CONNECTIVITY_SERVICE))
 						.getActiveNetworkInfo();
+		final boolean isNetworkAvailable =
+				networkInfo != null && networkInfo.isConnected();
 
-		return networkInfo != null && networkInfo.isConnected();
+		if( !isNetworkAvailable ) {
+			Toast.makeText(this.getApplicationContext(),
+					"Network connection not available", Toast.LENGTH_SHORT)
+					.show();
+		}
+
+		return isNetworkAvailable;
 	}
 }

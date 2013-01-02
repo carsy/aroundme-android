@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pt.up.fe.aroundme.R;
-import pt.up.fe.aroundme.controllers.LandmarksController;
+import pt.up.fe.aroundme.database.LandmarksDAO;
 import pt.up.fe.aroundme.models.Landmark;
 import android.app.Activity;
 import android.content.Intent;
@@ -17,7 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 public class ListLandmarksActivity extends Activity {
-	LandmarksController landmarksController;
+	LandmarksDAO landmarksDAO;
 
 	ListView listLandmarksView;
 
@@ -29,8 +29,8 @@ public class ListLandmarksActivity extends Activity {
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		this.landmarksController =
-				new LandmarksController(this.getApplicationContext());
+		this.landmarksDAO =
+				new LandmarksDAO(this.getApplicationContext());
 
 		final ViewGroup contentView =
 				(ViewGroup) this.getLayoutInflater().inflate(
@@ -40,7 +40,7 @@ public class ListLandmarksActivity extends Activity {
 				(ListView) contentView.findViewById(R.id.list_landmarks_view);
 
 		this.landmarks =
-				this.landmarksController.getLandmarksById(this.getIntent()
+				this.landmarksDAO.getLandmarksById(this.getIntent()
 						.getExtras().getIntArray(LANDMARKS_LIST_KEY));
 
 		this.setContentView(contentView);

@@ -6,8 +6,11 @@
     <string name="map_type_button_description">Toggle Map Type</string>
     
     <string name="landmark">Landmark</string>
+    <string name="event">Event</string>
     
     <string name="list_landmarks">Landmarks List</string>
+    <string name="list_events">Landmarks List</string>
+    
     <string name="menu_refresh">Landmarks refresh</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_about">About</string>

@@ -1,18 +1,20 @@
-package pt.up.fe.aroundme.controllers;
+package pt.up.fe.aroundme.database;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import pt.up.fe.aroundme.database.DBHelper;
 import pt.up.fe.aroundme.models.Event;
 import android.content.Context;
 
 import com.j256.ormlite.dao.Dao;
 
-public class EventsController {
+public class EventsDAO {
 	private final Dao<Event, Integer> eventDao;
 
-	public EventsController(final Context context) {
+	public EventsDAO(final Context context) {
 		this.eventDao = DBHelper.getInstance(context).getEventDao();
 	}
 
@@ -26,7 +28,7 @@ public class EventsController {
 		}
 	}
 
-	public List<Event> getAllLandmarks() {
+	public List<Event> getAllEvents() {
 		List<Event> events = null;
 		try {
 			events = this.eventDao.queryForAll();
@@ -70,5 +72,19 @@ public class EventsController {
 		} catch (final SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public List<Event> getEventsByLandmark(final Integer landmarkId) {
+		List<Event> events = new ArrayList<Event>();
+
+		try {
+			final Map<String, Object> values = new HashMap<String, Object>();
+			values.put("landmarkId", landmarkId);
+			events = this.eventDao.queryForFieldValues(values);
+		} catch (final SQLException e) {
+			e.printStackTrace();
+		}
+
+		return events;
 	}
 }

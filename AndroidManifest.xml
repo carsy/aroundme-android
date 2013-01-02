@@ -54,6 +54,15 @@
             android:name="pt.up.fe.aroundme.android.activities.LandmarkActivity"
             android:label="@string/landmark" >
         </activity>
+        <activity
+            android:name="pt.up.fe.aroundme.android.activities.ListEventsActivity"
+            android:label="@string/list_events" >
+        </activity>
+        <activity
+            android:name="pt.up.fe.aroundme.android.activities.EventActivity"
+            android:label="@string/event" >
+        </activity>
+        
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"

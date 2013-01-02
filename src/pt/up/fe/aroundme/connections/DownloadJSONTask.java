@@ -10,16 +10,10 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import pt.up.fe.aroundme.controllers.AroundMeController;
 import android.os.AsyncTask;
 import android.util.Log;
 
 public class DownloadJSONTask extends AsyncTask<URI, Integer, String> {
-	protected AroundMeController aroundMeController;
-
-	public DownloadJSONTask(final AroundMeController aroundMeController) {
-		this.aroundMeController = aroundMeController;
-	}
 
 	@Override
 	protected String doInBackground(final URI... uris) {

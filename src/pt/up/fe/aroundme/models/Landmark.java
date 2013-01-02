@@ -204,11 +204,7 @@ public class Landmark {
 	}
 
 	public List<Event> getEvents() {
-		final ArrayList<Event> eventsList = new ArrayList<Event>();
-		for(final Event item: this.events) {
-			eventsList.add(item);
-		}
-		return eventsList;
+		return new ArrayList<Event>(this.events);
 	}
 
 	@Override
