@@ -7,7 +7,7 @@
         android:key="pref_key_general"
         android:title="@string/prefs_category_general" >
         <pt.up.fe.aroundme.android.SeekBarPreference
-            android:defaultValue="15"
+            android:defaultValue="8"
             android:key="@string/prefs_radius_value"
             android:max="50"
             android:summary="@string/prefs_radius_summary"

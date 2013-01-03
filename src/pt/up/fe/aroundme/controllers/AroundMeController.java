@@ -47,26 +47,8 @@ public class AroundMeController {
 
 	// FIXME make this function prettier
 	public void refreshLandmarks(final Location userLocation, final int radius) {
-		final List<Landmark> landmarks2Remove = new ArrayList<Landmark>();
 		this.loadedLandmarks =
 				Collections.synchronizedList(new ArrayList<Landmark>());
-
-		for(final Landmark landmark: this.loadedLandmarks) {
-			if( !this.landmarksDAO.isInRadius(landmark, userLocation, radius) ) {
-				landmarks2Remove.add(landmark);
-				Log.d("refreshLandmarks(): landmark2remove added", landmark
-						.getUsername()
-						+ "");
-			}
-		}
-		for(final Landmark landmark: landmarks2Remove) {
-			// this.loadedLandmarks.remove(landmark);
-			this.mapManager.removeMarker(landmark.getId());
-
-			Log.d("refreshLandmarks(): landmark2remove removed", landmark
-					.getUsername()
-					+ "");
-		}
 
 		final List<Landmark> cachedLandmarks =
 				this.landmarksDAO.getLandmarksByRadius(userLocation, radius);
@@ -80,16 +62,6 @@ public class AroundMeController {
 		Log.d("refreshLandmarks(): loadedLandmarks", this.loadedLandmarks
 				.size()
 				+ "");
-
-		for(final Landmark landmark: this.loadedLandmarks) {
-			if( !landmarks2Remove.contains(landmark) ) {
-				this.mapManager.addMarker(landmark.getId(), landmark
-						.getLocationLatitude(),
-						landmark.getLocationLongitude(), landmark.getName());
-				Log.d("refreshLandmarks(): marker added", landmark
-						.getUsername());
-			}
-		}
 	}
 
 	// Callbacks for connections
@@ -126,11 +98,8 @@ public class AroundMeController {
 		this.landmarksDAO.createLandmark(landmark);
 		synchronized(this.loadedLandmarks) {
 			this.loadedLandmarks.add(landmark);
+			this.mapManager.addMarker(landmark);
 		}
-
-		this.mapManager.addMarker(landmark.getId(), landmark
-				.getLocationLatitude(), landmark.getLocationLongitude(),
-				landmark.getName());
 	}
 
 	public void loadEvents(final String eventsJSON) {
@@ -160,5 +129,9 @@ public class AroundMeController {
 		Log.d("addEvent(): event fetched", event.getName());
 
 		this.eventsDAO.createEvent(event);
+	}
+
+	public List<Landmark> getLoadedLandmarks() {
+		return this.loadedLandmarks;
 	}
 }

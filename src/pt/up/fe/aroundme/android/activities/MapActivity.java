@@ -23,6 +23,9 @@ public class MapActivity extends FragmentActivity {
 
 	// Activity Life Cycle
 
+	// TODO set layout for first run with tut or something.
+	// TODO create first run var in sharedpreferences.
+	// TODO warn user: first run must have network connection available
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -30,16 +33,13 @@ public class MapActivity extends FragmentActivity {
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
 		this.mapManager = new MapManager(this);
-		this.snapUsersPosition(this.getCurrentFocus());
 
 		Log.d(this.CLASS_NAME, "onCreate()");
 	}
 
-	/* Request updates at startup */
 	@Override
 	protected void onStart() {
 		super.onStart();
-		this.mapManager.requestLocationUpdates();
 
 		Log.d(this.CLASS_NAME, "onStart()");
 	}
@@ -47,6 +47,7 @@ public class MapActivity extends FragmentActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		this.menuRefresh();
 
 		Log.d(this.CLASS_NAME, "onResume()");
 	}
@@ -58,14 +59,9 @@ public class MapActivity extends FragmentActivity {
 		Log.d(this.CLASS_NAME, "onPause()");
 	}
 
-	/*
-	 * Remove the location listener updates from mapManager when Activity is
-	 * stopped
-	 */
 	@Override
 	protected void onStop() {
 		super.onStop();
-		this.mapManager.removeUpdates();
 
 		Log.d(this.CLASS_NAME, "onStop()");
 	}
@@ -122,22 +118,30 @@ public class MapActivity extends FragmentActivity {
 	}
 
 	private void menuListLandmarks() {
+		if( this.mapManager.getLoadedLandmarksSize() == 0 ) {
+			this.showToast("No Landmarks within radius");
+			return;
+		}
+
 		final Intent intent =
 				new Intent(this.getApplicationContext(),
 						ListLandmarksActivity.class);
 		intent.putExtra(ListLandmarksActivity.LANDMARKS_LIST_KEY,
-				this.mapManager.getLoadedLandmarksIds());
+				this.mapManager.getLoadedLandmarksUsername());
 
 		this.startActivity(intent);
 	}
 
 	private void menuRefresh() {
 		try {
-			this.mapManager.updateLandmarksMarkers();
+			this.mapManager.update();
 		} catch (final UserLocationIsNullException e) {
-			Toast.makeText(this.getApplicationContext(),
-					"Waiting for location...", Toast.LENGTH_SHORT).show();
+			this.showToast("Waiting for location...");
 			e.printStackTrace();
+		}
+
+		if( !this.isNetworkAvailable() ) {
+			this.showToast("Network connection not available");
 		}
 	}
 
@@ -151,22 +155,8 @@ public class MapActivity extends FragmentActivity {
 
 	// onClick Buttons' Handlers
 
-	public void onClickSnapUsersPositionButton(final View view) {
-		this.snapUsersPosition(view);
-	}
-
 	public void onClickMapTypeButton(final View view) {
 		this.mapManager.toggleMapType(view);
-	}
-
-	private void snapUsersPosition(final View view) {
-		try {
-			this.mapManager.snapUsersPosition(view);
-		} catch (final UserLocationIsNullException e) {
-			Toast.makeText(this.getApplicationContext(),
-					"Waiting for location...", Toast.LENGTH_SHORT).show();
-			e.printStackTrace();
-		}
 	}
 
 	// Device Network State
@@ -175,15 +165,11 @@ public class MapActivity extends FragmentActivity {
 				((ConnectivityManager) this
 						.getSystemService(Context.CONNECTIVITY_SERVICE))
 						.getActiveNetworkInfo();
-		final boolean isNetworkAvailable =
-				networkInfo != null && networkInfo.isConnected();
+		return networkInfo != null && networkInfo.isConnected();
+	}
 
-		if( !isNetworkAvailable ) {
-			Toast.makeText(this.getApplicationContext(),
-					"Network connection not available", Toast.LENGTH_SHORT)
-					.show();
-		}
-
-		return isNetworkAvailable;
+	public void showToast(final String message) {
+		Toast.makeText(this.getApplicationContext(), message,
+				Toast.LENGTH_SHORT).show();
 	}
 }

@@ -29,8 +29,7 @@ public class ListLandmarksActivity extends Activity {
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		this.landmarksDAO =
-				new LandmarksDAO(this.getApplicationContext());
+		this.landmarksDAO = new LandmarksDAO(this.getApplicationContext());
 
 		final ViewGroup contentView =
 				(ViewGroup) this.getLayoutInflater().inflate(
@@ -40,8 +39,8 @@ public class ListLandmarksActivity extends Activity {
 				(ListView) contentView.findViewById(R.id.list_landmarks_view);
 
 		this.landmarks =
-				this.landmarksDAO.getLandmarksById(this.getIntent()
-						.getExtras().getIntArray(LANDMARKS_LIST_KEY));
+				this.landmarksDAO.getLandmarksByUsername(this.getIntent()
+						.getExtras().getStringArray(LANDMARKS_LIST_KEY));
 
 		this.setContentView(contentView);
 	}

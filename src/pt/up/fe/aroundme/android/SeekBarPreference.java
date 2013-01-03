@@ -45,8 +45,7 @@ public class SeekBarPreference extends Preference implements
 		this.initPreference(context, attrs);
 	}
 
-	private void
-			initPreference(final Context context, final AttributeSet attrs) {
+	private void initPreference(final Context context, final AttributeSet attrs) {
 		this.setValuesFromXml(attrs);
 		this.mSeekBar = new SeekBar(context, attrs);
 		this.mSeekBar.setMax(this.mMaxValue - this.mMinValue);
@@ -77,10 +76,8 @@ public class SeekBarPreference extends Preference implements
 
 	}
 
-	private String
-			getAttributeStringValue(final AttributeSet attrs,
-					final String namespace, final String name,
-					final String defaultValue) {
+	private String getAttributeStringValue(final AttributeSet attrs,
+			final String namespace, final String name, final String defaultValue) {
 		String value = attrs.getAttributeValue(namespace, name);
 		if( value == null ) {
 			value = defaultValue;

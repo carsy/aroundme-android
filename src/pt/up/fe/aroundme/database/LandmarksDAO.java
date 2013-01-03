@@ -2,6 +2,7 @@ package pt.up.fe.aroundme.database;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import pt.up.fe.aroundme.models.Landmark;
@@ -88,12 +89,17 @@ public class LandmarksDAO {
 		return landmarksInRadius;
 	}
 
-	public List<Landmark> getLandmarksById(final int[] landmarksId) {
+	public List<Landmark> getLandmarksByUsername(
+			final String[] landmarksUsername) {
 		final ArrayList<Landmark> landmarks = new ArrayList<Landmark>();
 
-		for(final Integer landmarkId: landmarksId) {
+		for(final String landmarkUsername: landmarksUsername) {
 			try {
-				landmarks.add(this.landmarkDao.queryForId(landmarkId));
+				final HashMap<String, Object> fieldValues =
+						new HashMap<String, Object>();
+				fieldValues.put("username", landmarkUsername);
+				landmarks.add(this.landmarkDao.queryForFieldValues(fieldValues)
+						.get(0));
 			} catch (final SQLException e) {
 				e.printStackTrace();
 			}

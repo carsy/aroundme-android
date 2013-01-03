@@ -1,6 +1,7 @@
 package pt.up.fe.aroundme.android;
 
 import pt.up.fe.aroundme.android.exceptions.UserLocationIsNullException;
+import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -9,28 +10,20 @@ import android.os.Bundle;
 import android.util.Log;
 
 public class UserLocationManager implements LocationListener {
-	private static final int LOCATION_UPDATE_MINDISTANCE = 1;
-	private static final int LOCATION_UPDATES_MINTIME = 400;
-
-	private String locationProvider;
 	private Location userLocation;
 
 	private final MapManager mapManager;
 
-	private final LocationManager locationManager;
-
 	UserLocationManager(final MapManager mapManager,
 			final LocationManager locationManager) {
 		this.mapManager = mapManager;
-
-		this.locationManager = locationManager;
-		this.locationProvider = this.updateLocationProvider();
-		this.userLocation = this.updateLastKnownLocation();
+		this.userLocation = this.mapManager.getMyLocation();
 	}
 
 	@Override
 	public void onLocationChanged(final Location location) {
 		this.userLocation = new Location(location);
+		Log.d("onLocationChanged()", this.userLocation + "");
 		try {
 			this.mapManager.update();
 		} catch (final UserLocationIsNullException e) {
@@ -41,12 +34,12 @@ public class UserLocationManager implements LocationListener {
 
 	@Override
 	public void onProviderDisabled(final String provider) {
-		this.updateLocationProvider();
+		Log.d("onProviderDisabled()", provider);
 	}
 
 	@Override
 	public void onProviderEnabled(final String provider) {
-		this.updateLocationProvider();
+		Log.d("onProviderEnabled()", provider);
 	}
 
 	@Override
@@ -55,47 +48,33 @@ public class UserLocationManager implements LocationListener {
 		Log.d(provider, "provider status changed to => " + status);
 	}
 
-	private Location updateLastKnownLocation() {
-		return this.userLocation =
-				this.locationManager
-						.getLastKnownLocation(this.locationProvider);
-	}
-
-	private String updateLocationProvider() {
-		final Criteria criteria = new Criteria();
-		criteria.setCostAllowed(false);
-
-		return this.locationProvider =
-				this.locationManager.getBestProvider(criteria, true);
-	}
-
-	public void requestLocationUpdates() {
-		this.locationManager.requestLocationUpdates(this.locationProvider,
-				LOCATION_UPDATES_MINTIME, LOCATION_UPDATE_MINDISTANCE, this);
-	}
-
-	public void removeUpdates() {
-		this.locationManager.removeUpdates(this);
-	}
-
 	// GETTERS
 
 	public Location getLocation() throws UserLocationIsNullException {
+		if( this.userLocation == null ) {
+			this.userLocation = this.mapManager.getMyLocation();
+		}
+
+		if( this.userLocation == null ) {
+			final LocationManager locationManager =
+					(LocationManager) this.mapManager.getMapActivity()
+							.getSystemService(Context.LOCATION_SERVICE);
+			this.userLocation =
+					locationManager.getLastKnownLocation(locationManager
+							.getBestProvider(new Criteria(), true));
+		}
+
 		if( this.userLocation == null ) { throw new UserLocationIsNullException(); }
 
 		return this.userLocation;
 	}
 
 	public double getLatitude() throws UserLocationIsNullException {
-		if( this.userLocation == null ) { throw new UserLocationIsNullException(); }
-
-		return this.userLocation.getLatitude();
+		return this.getLocation().getLatitude();
 	}
 
 	public double getLongitude() throws UserLocationIsNullException {
-		if( this.userLocation == null ) { throw new UserLocationIsNullException(); }
-
-		return this.userLocation.getLongitude();
+		return this.getLocation().getLongitude();
 	}
 
 }

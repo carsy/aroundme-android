@@ -13,26 +13,17 @@
     </fragment>
 
     <RelativeLayout
-        android:id="@+id/sideButtons"
+        android:id="@+id/maptype"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right" >
-
-        <ImageButton
-            android:id="@+id/snapUserPostionButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="false"
-            android:layout_gravity="right"
-            android:contentDescription="@string/list_landmarks"
-            android:onClick="@string/on_click_snap_users_position"
-            android:src="@drawable/snap_user_location" />
+        android:layout_margin="10dp" >
 
         <ImageButton
             android:id="@+id/mapTypeButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/snapUserPostionButton"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="20dp"
             android:contentDescription="@string/map_type_button_description"
             android:onClick="@string/on_click_map_type_button"
             android:src="@drawable/location_map" />
