@@ -22,16 +22,16 @@ public class LandmarkActivity extends Activity {
 
 		this.landmarksDAO = new LandmarksDAO(this.getApplicationContext());
 
+		this.landmark =
+				this.landmarksDAO.getLandmarkById(this.getIntent().getExtras()
+						.getInt(LandmarkActivity.LANDMARK_ID_KEY));
+
 		final View contentView =
 				this.getLayoutInflater().inflate(R.layout.landmark_view, null);
 
 		final TextView landmarkNameTextView =
 				(TextView) contentView
 						.findViewById(R.id.landmark_name_text_view);
-
-		this.landmark =
-				this.landmarksDAO.getLandmarkById(this.getIntent().getExtras()
-						.getInt(LandmarkActivity.LANDMARK_ID_KEY));
 
 		landmarkNameTextView.setText(this.landmark.getName());
 

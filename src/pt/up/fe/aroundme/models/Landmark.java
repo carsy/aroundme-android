@@ -1,8 +1,5 @@
 package pt.up.fe.aroundme.models;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -201,10 +198,6 @@ public class Landmark {
 
 	public Integer getWereHereCount() {
 		return this.wereHereCount;
-	}
-
-	public List<Event> getEvents() {
-		return new ArrayList<Event>(this.events);
 	}
 
 	@Override

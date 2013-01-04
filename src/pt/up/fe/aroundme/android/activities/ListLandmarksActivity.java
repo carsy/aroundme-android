@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pt.up.fe.aroundme.R;
+import pt.up.fe.aroundme.database.EventsDAO;
 import pt.up.fe.aroundme.database.LandmarksDAO;
 import pt.up.fe.aroundme.models.Landmark;
 import android.app.Activity;
@@ -56,7 +57,14 @@ public class ListLandmarksActivity extends Activity {
 		final List<String> landmarkTitles = new ArrayList<String>();
 
 		for(final Landmark landmark: this.landmarks) {
-			landmarkTitles.add(landmark.getName());
+			final int eventsSize =
+					new EventsDAO(this.getApplicationContext())
+							.getEventsByLandmark(landmark.getId()).size();
+			final String title =
+					" ("
+						+ (eventsSize > 0 ? eventsSize + " event"
+							+ (eventsSize > 1 ? "s" : "") : "no events") + ")";
+			landmarkTitles.add(landmark.getName() + title);
 		}
 
 		final ArrayAdapter<String> adapter =
