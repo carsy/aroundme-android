@@ -54,6 +54,7 @@ public class ListLandmarksActivity extends Activity {
 	}
 
 	private void setupListView() {
+
 		final List<String> landmarkTitles = new ArrayList<String>();
 
 		for(final Landmark landmark: this.landmarks) {
